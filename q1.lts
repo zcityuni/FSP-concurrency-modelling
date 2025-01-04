@@ -1,0 +1,10 @@
+NS = (n -> ne -> se -> Q3BRANCH),
+Q3BRANCH = (s -> ne -> nw -> nw -> sw -> Q3BRANCH   
+         |s -> ne -> nw -> nw -> sw -> Q3BRANCH).
+
+WE = (ne -> se -> Q4BRANCH),
+Q4BRANCH = (s -> e -> e -> ne -> nw -> nw -> sw -> Q4BRANCH  // s e e
+         |e -> e -> s -> ne -> nw -> nw -> sw -> Q4BRANCH  // e e s 
+         |e -> s -> e -> ne -> nw -> nw -> sw -> Q4BRANCH). // e s e 
+
+||S = (NS || WE).

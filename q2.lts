@@ -1,0 +1,6 @@
+/**
+
+2a) The model is non deterministic its not possible to know the probability of one drink being produced over another, furthermore, we dont care.
+2b) Again, we have no reference of processor clock speed in this system, we do not care about the time it takes. 
+
+**/

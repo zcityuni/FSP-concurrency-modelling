@@ -1,0 +1,29 @@
+/*
+
+3a) 
+
+This is basically similar to the single lane bridge problem
+Actions of interest for both gangs are: Arrive, Play and Leave.
+
+3b) 
+Safety property would maintain that for the court to be safe it must be either shark.arrive -> shark.leave OR jets.arrive -> jets.leave (im only including the system not the mechanics)
+
+*/
+
+GANG = (arrive -> play -> leave -> GANG).
+
+COURT = EMPTY,
+EMPTY = (
+    sharks.arrive -> sharks.play -> sharks.leave -> EMPTY
+    | jets.arrive -> jets.play -> jets.leave -> EMPTY
+).
+
+property SafeCourt =
+    (sharks.arrive -> SharksPlaying) | (jets.arrive -> JetsPlaying),
+SharksPlaying =
+    (sharks.play -> sharks.leave -> SafeCourt),
+JetsPlaying =
+    (jets.play -> jets.leave -> SafeCourt).
+
+||BASKETBALL = (sharks:GANG || jets:GANG || COURT || SafeCourt).
+
