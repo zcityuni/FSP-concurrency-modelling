@@ -1,4 +1,4 @@
-public class courtShare {
+public class p7 {
 
     //same varibles from the FSP
     private enum Turn {SHARKS, JETS}
@@ -86,7 +86,7 @@ public class courtShare {
     }
 
     public static void main(String[] args) {
-        courtShare court = new courtShare();
+        p7 court = new p7();
 
         Runnable sharkRunnable = () -> {
             try {
