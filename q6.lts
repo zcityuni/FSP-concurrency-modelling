@@ -1,0 +1,72 @@
+/*
+	Q6a) now that they are taking turns to ensure fairness and avoid greed the new interest actions are
+	tieRed, checkRed, arrive, play, leave, untieRed as before but also introducing 
+	setTurn and checkTurn to ensure fairness as per the police guideline
+*/
+
+const True = 1
+const False = 0
+range HandkerchiefTied = False..True
+const SHARKS = 1 //boolean for taking turns
+const JETS = 0
+range Turn = JETS..SHARKS
+
+//actions for gangs
+set Actions = {tieRed, setTurn, checkRed, checkTurn, arrive, play, leave, untieRed}
+
+GANG = (tieRed -> setTurn -> checkRed -> checkTurn -> DECISION),
+DECISION =
+    (arrive -> play -> leave -> untieRed -> GANG
+    | wait -> checkRed -> checkTurn -> DECISION) + Actions.
+
+//turn taking process
+TURN = TURN[SHARKS], //arbitrarily start w sharks
+TURN[g:Turn] = (
+    when (g == SHARKS)
+      sharks.setTurn -> TURN[JETS] //sharks give the turn to jets
+    |when (g == JETS)
+      jets.setTurn -> TURN[SHARKS] //vice versa
+) + Actions.
+
+
+COURT = COURT[False][False][SHARKS], //both gangs have red handkerchief untied at start and sharks have the first turn
+COURT[sharksTied:HandkerchiefTied][jetsTied:HandkerchiefTied][turn:Turn] =
+    (when (!sharksTied)
+         sharks.tieRed -> sharks.setTurn -> COURT[True][jetsTied][JETS] //sharks tie their red handkerchief
+     |when (!jetsTied)
+         jets.tieRed -> jets.setTurn -> COURT[sharksTied][True][SHARKS] //jets tie their red handkerchief
+     
+     //if both are tied and its not their turn they both check then they wait and retry
+	 // note they dont have to wait if its not their turn AND the other team dont have their handkerchief tied
+     |when (sharksTied && jetsTied && turn == JETS)
+         sharks.checkRed -> sharks.checkTurn -> sharks.wait -> COURT[sharksTied][jetsTied][JETS] // Sharks retry.
+     |when (sharksTied && jetsTied && turn == SHARKS)
+         jets.checkRed -> jets.checkTurn -> jets.wait -> COURT[sharksTied][jetsTied][SHARKS] // Jets retry.
+
+     //if its sharks turn and their handkerchief is tied then they can take a turn
+     |when (sharksTied && !jetsTied && turn == SHARKS)
+         sharks.checkRed -> sharks.checkTurn -> sharks.arrive -> sharks.play -> sharks.leave -> sharks.untieRed -> COURT[False][jetsTied][JETS]
+
+     //if its jets turn and their handkerchief is tied then they can take a turn
+     |when (jetsTied && !sharksTied && turn == JETS)
+         jets.checkRed -> jets.checkTurn -> jets.arrive -> jets.play -> jets.leave -> jets.untieRed -> COURT[sharksTied][False][SHARKS]).
+
+||BASKETBALL = (sharks:GANG || jets:GANG || TURN || COURT || SafeCourt).
+
+//stress testing
+||BASKETBALL_PRIORITY_SHARKS = BASKETBALL << {sharks.tieRed, sharks.checkRed, sharks.arrive}.
+||BASKETBALL_PRIORITY_JETS = BASKETBALL << {jets.tieRed, jets.checkRed, jets.arrive}.
+
+//safety so that they never enter the court at the same time
+property SafeCourt =
+    (sharks.arrive -> SharksPlaying 
+     | jets.arrive -> JetsPlaying),
+SharksPlaying =
+    (sharks.play -> sharks.leave -> SafeCourt),
+JetsPlaying =
+    (jets.play -> jets.leave -> SafeCourt).
+
+//progress for fairness
+progress SHARKS_PLAY = {sharks.arrive}
+progress JETS_PLAY = {jets.arrive}
+progress GANGS_PLAY = {sharks.arrive, jets.arrive}

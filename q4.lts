@@ -1,0 +1,46 @@
+/*
+
+  Q4a) the key actions of interest are 
+        gangs tying their own hankerchief, 
+        checking the other gangs red handkerchief
+        arriving/entering the court, playing, leaving - as before
+        untying their own handkerchief after playing
+*/
+
+const True = 1
+const False = 0
+range HandkerchiefTied = False..True
+
+GANG = (tieRed -> checkRed -> DECISION),
+DECISION = (arrive -> play -> leave -> untieRed -> GANG
+          | untieRed -> GANG).
+
+COURT = COURT[False][False], //both gangs have red handkerchief untied at start
+
+COURT[sharksTied:HandkerchiefTied][jetsTied:HandkerchiefTied] =
+    (when (!sharksTied) 
+         sharks.tieRed -> COURT[True][jetsTied] //sharks tie their red handkerchief
+     |when (!jetsTied) 
+         jets.tieRed -> COURT[sharksTied][True] //jets tie their red handkerchief
+
+	 //if both are tied and they both check then they untie and retry
+     |when (sharksTied && jetsTied)  
+         sharks.checkRed -> sharks.untieRed -> COURT[False][jetsTied]
+	 |when (sharksTied && jetsTied) 
+         jets.checkRed -> jets.untieRed -> COURT[sharksTied][False]
+
+	 //if own gang handkerchief is tied but the other gangs one isnt then arrive play leave untie
+     |when (sharksTied && !jetsTied) 
+         sharks.checkRed -> sharks.arrive -> sharks.play -> sharks.leave -> sharks.untieRed -> COURT[False][jetsTied]
+     |when (jetsTied && !sharksTied) 
+         jets.checkRed -> jets.arrive -> jets.play -> jets.leave -> jets.untieRed -> COURT[sharksTied][False]).
+
+||BASKETBALL = (sharks:GANG || jets:GANG || COURT || SafeCourt).
+
+property SafeCourt =
+    (sharks.arrive -> SharksPlaying 
+     | jets.arrive -> JetsPlaying),
+SharksPlaying =
+    (sharks.play -> sharks.leave -> SafeCourt),
+JetsPlaying =
+    (jets.play -> jets.leave -> SafeCourt).
