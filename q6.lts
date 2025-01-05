@@ -39,9 +39,9 @@ COURT[sharksTied:HandkerchiefTied][jetsTied:HandkerchiefTied][turn:Turn] =
      //if both are tied and its not their turn they both check then they wait and retry
 	 // note they dont have to wait if its not their turn AND the other team dont have their handkerchief tied
      |when (sharksTied && jetsTied && turn == JETS)
-         sharks.checkRed -> sharks.checkTurn -> sharks.wait -> COURT[sharksTied][jetsTied][JETS] // Sharks retry.
+         sharks.checkRed -> sharks.checkTurn -> sharks.wait -> COURT[sharksTied][jetsTied][JETS]
      |when (sharksTied && jetsTied && turn == SHARKS)
-         jets.checkRed -> jets.checkTurn -> jets.wait -> COURT[sharksTied][jetsTied][SHARKS] // Jets retry.
+         jets.checkRed -> jets.checkTurn -> jets.wait -> COURT[sharksTied][jetsTied][SHARKS]
 
      //if its sharks turn and their handkerchief is tied then they can take a turn
      |when (sharksTied && !jetsTied && turn == SHARKS)

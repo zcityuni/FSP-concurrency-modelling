@@ -14,8 +14,8 @@ GANG = (arrive -> play -> leave -> GANG).
 
 COURT = COURT,
 COURT = (
-    sharks.arrive -> sharks.play -> sharks.leave -> EMPTY
-    | jets.arrive -> jets.play -> jets.leave -> EMPTY
+    sharks.arrive -> sharks.play -> sharks.leave -> COURT
+    | jets.arrive -> jets.play -> jets.leave -> COURT
 ).
 
 property SafeCourt =

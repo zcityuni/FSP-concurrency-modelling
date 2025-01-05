@@ -66,10 +66,10 @@ public class courtShare {
     // as per FSP gang has to leave after it has arrive -> play. im action hiding the play because its not important here
     public synchronized void leaveCourt(String gang) {
         if (gang.equals("sharks")) {
-            sharksHandkerchief = false; //sharks.untieRed
+            sharksHandkerchief = false; //sharks.leave -> sharks.untieRed
             System.out.println("sharks leave the court and untie their red handkerchief.");
         } else if (gang.equals("jets")) {
-            jetsHandkerchief = false; //jets.untieRed
+            jetsHandkerchief = false; //jets.leave -> jets.untieRed
             System.out.println("jets leave the court and untie their red handkerchief.");
         }
         notifyAll(); //notify both gangs if theres a change in handkerchief tying
